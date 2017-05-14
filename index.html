@@ -33,20 +33,12 @@
         var $canvas = $(`<canvas width=${width} height=${height}></canvas>`).appendTo($('div')) //这里的引号死记吧
 
 
-        function addPoint(x,y){
-            var $div = $('<div></div>')
-            $div.css({
-                top: y,
-                left: x,
-                position: 'absolute',
-                width: 8,
-                height: 8,
-                marginTop:-3,
-                marginLeft:-3,
-                background: 'green',
-                borderRadius: '50%',
-            })
-            $div.appendTo(document.body)
+        function addPoint(x1,y1,x2,y2){
+            var context = $('canvas')[0].getContext("2d")
+            context.beginPath();
+            context.moveTo(x1,y1);
+            context.lineTo(x2,y2);
+            context.stroke();
         }
 
 
@@ -54,11 +46,17 @@
             e.preventDefault()
             var pageX = e.originalEvent.touches[0].pageX
             var pageY = e.originalEvent.touches[0].pageY
-            var context = $('canvas')[0].getContext("2d")
-            context.fillStyle = 'green';
-            context.fillRect(pageX-5,pageY-5,10,10);
+            addPoint(lastPoint.x, lastPoint.y, pageX, pageY)
+            lastPoint = {x:pageX, y:pageY}
         })
 
+        var lastPoint = null
+        $('canvas').on('touchstart',function(e){
+            e.preventDefault()
+            var pageX = e.originalEvent.touches[0].pageX
+            var pageY = e.originalEvent.touches[0].pageY
+            lastPoint = {x:pageX,y:pageY}
+        })
 
 
 //        $('canvas').on('touchmove',function(e){
