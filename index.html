@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>画板</title>
+    <script src="jquery.min.js"></script>
+    <style>
+        *{
+            padding:0;
+            margin:0;
+        }
+        canvas{
+            border:1px solid red;
+        }
+        div{
+            width:100vw;
+            height:100vh;
+        }
+    </style>
+</head>
+<body>
+    <div>
+
+    </div>
+
+    <script>
+        var width = $('div').width()
+        var height = $('div').height()
+        console.log(width,height)
+        var $canvas = $(`<canvas width=${width} height=${height}></canvas>`).appendTo($('div')) //这里的引号死记吧
+
+
+        function addPoint(x,y){
+            var $div = $('<div></div>')
+            $div.css({
+                top: y,
+                left: x,
+                position: 'absolute',
+                width: 8,
+                height: 8,
+                marginTop:-3,
+                marginLeft:-3,
+                background: 'green',
+                borderRadius: '50%',
+            })
+            $div.appendTo(document.body)
+        }
+
+
+        $('canvas').on('touchmove',function(e){
+            e.preventDefault()
+            var pageX = e.originalEvent.touches[0].pageX
+            var pageY = e.originalEvent.touches[0].pageY
+            var context = $('canvas')[0].getContext("2d")
+            context.fillStyle = 'green';
+            context.fillRect(pageX-5,pageY-5,10,10);
+        })
+
+
+
+//        $('canvas').on('touchmove',function(e){
+//            e.preventDefault()
+//            var pageX = e.originalEvent.touches[0].pageX  //这里获得的pageX和pageY都是相对页面的，不是相对canvas的
+//            var pageY = e.originalEvent.touches[0].pageY
+//            addPoint(pageX,pageY)
+//        })
+    </script>
+
+</body>
+</html>
