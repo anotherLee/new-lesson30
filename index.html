@@ -12,28 +12,35 @@
             padding:0;
             margin:0;
         }
-        canvas{
-            border:1px solid red;
-        }
-        div{
+
+        div.parent{
             width:100vw;
             height:100vh;
+        }
+        div.controls{
+            position:absolute;
+            top:0;
+            left:0;
+            z-index:1;
         }
     </style>
 </head>
 <body>
-    <div>
-
+    <div class="parent">
+        <div class="controls">
+            <label><input type="radio" name="tool" value="pen" checked/>画笔</label>
+            <label><input type="radio" name="tool" value="eraser" />橡皮</label>
+        </div>
     </div>
 
     <script>
         var width = $('div').width()
         var height = $('div').height()
         console.log(width,height)
-        var $canvas = $(`<canvas width=${width} height=${height}></canvas>`).appendTo($('div')) //这里的引号死记吧
+        var $canvas = $(`<canvas width=${width} height=${height}></canvas>`).appendTo($('div.parent')) //这里的引号死记吧
 
 
-        function addPoint(x1,y1,x2,y2){
+        function drawLine(x1,y1,x2,y2){
             var context = $('canvas')[0].getContext("2d")
             context.beginPath();
             context.moveTo(x1,y1);
@@ -44,10 +51,16 @@
 
         $('canvas').on('touchmove',function(e){
             e.preventDefault()
+            var tool = getTool()
             var pageX = e.originalEvent.touches[0].pageX
             var pageY = e.originalEvent.touches[0].pageY
-            addPoint(lastPoint.x, lastPoint.y, pageX, pageY)
-            lastPoint = {x:pageX, y:pageY}
+            if(tool === 'pen'){
+                drawLine(lastPoint.x, lastPoint.y, pageX, pageY)
+                lastPoint = {x:pageX, y:pageY}
+            }else if(tool === 'eraser'){
+                eraser(pageX,pageY,10,10)
+            }
+
         })
 
         var lastPoint = null
@@ -55,16 +68,25 @@
             e.preventDefault()
             var pageX = e.originalEvent.touches[0].pageX
             var pageY = e.originalEvent.touches[0].pageY
-            lastPoint = {x:pageX,y:pageY}
+            var tool = getTool()
+            if(tool === 'pen') {
+                lastPoint = {x: pageX, y: pageY}
+            }else if(tool === 'eraser'){
+                eraser(pageX,pageY,10,10)
+            }
+
+
         })
 
 
-//        $('canvas').on('touchmove',function(e){
-//            e.preventDefault()
-//            var pageX = e.originalEvent.touches[0].pageX  //这里获得的pageX和pageY都是相对页面的，不是相对canvas的
-//            var pageY = e.originalEvent.touches[0].pageY
-//            addPoint(pageX,pageY)
-//        })
+        function eraser(x,y,width,height){
+            var context = $('canvas')[0].getContext("2d")
+            context.clearRect(x-width/2,y-height/2,width,height)
+        }
+
+        function getTool(){
+            return $('[name=tool]:checked').val()
+        }
     </script>
 
 </body>
